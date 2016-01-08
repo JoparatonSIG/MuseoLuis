@@ -96,6 +96,7 @@ sequelize.sync().then(function () {
         [
           { autor: 'autor1', descripcion: '111asdasdasas111' },
           { autor: 'autor2', descripcion: '2222asdasdasd222' }
+
         ]
       ).then(function () {
         console.log('Base de datos (tabla Obra) inicializada');
