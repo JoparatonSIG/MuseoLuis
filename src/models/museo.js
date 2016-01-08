@@ -25,32 +25,46 @@ var sequelize = new Sequelize(dbName, user, pwd,
     port:     port,
     host:     host,
     storage:  storage,  // solo SQLite (.env)
-    omitNull: true      // solo Postgres
+    omitNull: true,      // solo Postgres
+    maxConcurrentQueries: 100,
+    define: {
+      timestamps: true,
+      paranoid: true
+    },
+    pool: { maxConnections:5, maxIdleTime: 30 }
   }
 );
 // Importar definicion de la tabla Forum
-var usuariosPath = path.join(__dirname,'usuarios');
-var Usuarios = sequelize.import(usuariosPath);
+var usuarioPath = path.join(__dirname,'usuario');
+var Usuario = sequelize.import(usuarioPath);
 
 // Importar definicion de la tabla Topic
-var nivelesPath = path.join(__dirname,'niveles');
-var Niveles = sequelize.import(nivelesPath);
+var nivelPath = path.join(__dirname,'nivel');
+var Nivel = sequelize.import(nivelPath);
+
+// Importar definicion de la tabla Topic
+var obraPath = path.join(__dirname,'obra');
+var Obra = sequelize.import(obraPath);
 
 // los topics pertenecen a un forum registrado
-Usuarios.belongsTo(Niveles);
-Niveles.hasMany(Usuarios);
+Usuario.belongsTo(Nivel);
+Nivel.hasMany(Usuario);
+Obra.belongsTo(Usuario);
+Usuario.hasMany(Obra);
 
 // exportar tablas
-exports.Usuarios = Usuarios;
-exports.Niveles = Niveles;
+exports.Usuario = Usuario;
+exports.Nivel = Nivel;
+exports.Obra = Obra;
+
 
 // sequelize.sync() inicializa tabla de preguntas en DB
 sequelize.sync().then(function () {
   console.log ('sequelize SYNC');
   // then(..) ejecuta el manejador una vez creada la tabla
-  Usuarios.count().then(function (count) {
+  Usuario.count().then(function (count) {
     if (count === 0) {   // la tabla se inicializa solo si está vacía
-      Usuarios.bulkCreate(
+      Usuario.bulkCreate(
         [
           { email: 'lucho@gmail.com' ,nombre: 'lucho' ,password: 'mono' },
           { email: 'usu@gmail.com' ,nombre: 'usu' ,password: 'usu' },
@@ -58,9 +72,9 @@ sequelize.sync().then(function () {
         ]
       ).then(function () {
       console.log('Base de datos (tabla usuarios) inicializada');
-      Niveles.count().then(function (count) {
+      Nivel.count().then(function (count) {
         if (count === 0) {
-          Niveles.bulkCreate(
+          Nivel.bulkCreate(
           [
             { categoria: 'admin' },
             { categoria: 'empleado' },
@@ -70,8 +84,23 @@ sequelize.sync().then(function () {
             console.log('Base de datos (tabla Niveles) inicializada');
           });
         }
-      }); // Niveles.count()
+      }); // Nivel.count()
+
+
     });
     }
-  }); // Usuarios.count()
+  }); // Usuario.count()
+  Obra.count().then(function (count) {
+    if (count === 0) {
+      Obra.bulkCreate(
+        [
+          { autor: 'autor1', descripcion: '111asdasdasas111' },
+          { autor: 'autor2', descripcion: '2222asdasdasd222' }
+        ]
+      ).then(function () {
+        console.log('Base de datos (tabla Obra) inicializada');
+      });
+    }
+  }); // Nivel.count()
+
 });
