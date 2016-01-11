@@ -35,7 +35,7 @@ router.get('/obra', function (req, res) {
 		} else {
 			res.send(401, 'No se encontraron las Obras');
 		}
-		}, function (error) {
+	}, function (error) {
 			res.send('Obra no encontrada');
 	});
 });
@@ -62,12 +62,12 @@ router.put('/obra/:obraId', function (req, res) {
 
 // GET /obra/:obraId
 // Toma una obra por id
-router.get('/Obra/:obraId', function (req, res) {
+router.get('/obra/:obraId', function (req, res) {
 	var obra = Museo.Obra.build();
 
-	obra.retrieveById(req.params.obraId, function (obra) {
-		if (obra) {
-			res.json(obra);
+	obra.retrieveById(req.params.obraId, function (obras) {
+		if (obras) {
+			res.json(obras);
 		} else {
 			res.send(401, 'Obra no encontrada');
 		}

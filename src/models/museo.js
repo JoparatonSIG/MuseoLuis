@@ -46,22 +46,44 @@ var Nivel = sequelize.import(nivelPath);
 var obraPath = path.join(__dirname,'obra');
 var Obra = sequelize.import(obraPath);
 
+// Importar definicion de la tabla Topic
+var analisistipoPath = path.join(__dirname,'analisistipo');
+var AnalisisTipo = sequelize.import(analisistipoPath);
+
 // los topics pertenecen a un forum registrado
 Usuario.belongsTo(Nivel);
 Nivel.hasMany(Usuario);
 Obra.belongsTo(Usuario);
 Usuario.hasMany(Obra);
+Obra.belongsTo(AnalisisTipo);
+AnalisisTipo.hasMany(Obra);
 
 // exportar tablas
 exports.Usuario = Usuario;
 exports.Nivel = Nivel;
 exports.Obra = Obra;
-
+exports.AnalisisTipo = AnalisisTipo;
 
 // sequelize.sync() inicializa tabla de preguntas en DB
 sequelize.sync().then(function () {
   console.log ('sequelize SYNC');
   // then(..) ejecuta el manejador una vez creada la tabla
+
+  AnalisisTipo.count().then(function (count) {
+    if (count === 0) {
+      AnalisisTipo.bulkCreate(
+        [
+          { tipo: 'tipo1', subtipo: 'subtipo1', predeterminado: 'predeterminado1' },
+          { tipo: 'tipo2', subtipo: 'subtipo2', predeterminado: 'predeterminado2'  }
+
+        ]
+      ).then(function () {
+        console.log('Base de datos (tabla AnalisisTipo) inicializada');
+      });
+    }
+  }); // AnalisisTipo.count()
+
+
   Usuario.count().then(function (count) {
     if (count === 0) {   // la tabla se inicializa solo si está vacía
       Usuario.bulkCreate(
@@ -103,5 +125,7 @@ sequelize.sync().then(function () {
       });
     }
   }); // Nivel.count()
+
+
 
 });

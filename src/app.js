@@ -9,6 +9,8 @@ var estatico = require('./controllers/estatico');
 var usuario = require('./controllers/usuario');
 var nivel = require('./controllers/nivel');
 var obra = require('./controllers/obra');
+var analisistipo = require('./controllers/analisistipo');
+
 
 var app = express();
 
@@ -29,6 +31,8 @@ app.use('/', estatico);
 app.use('/api', usuario);
 app.use('/api', nivel);
 app.use('/api', obra);
+app.use('/api', analisistipo);
+
 
 
 // catch 404 and forward to error handler
