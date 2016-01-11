@@ -78,7 +78,7 @@ module.exports = function (sequelize, DataTypes) {
         {
           name: 'idxCategoria',
           method: 'BTREE',
-          unique: true,
+          unique: false,
           fields: ['descripcion']
         }
       ]
